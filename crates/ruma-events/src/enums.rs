@@ -47,6 +47,8 @@ event_enum! {
         #[cfg(feature = "unstable-msc2545")]
         #[ruma_enum(ident = ImagePackRooms, alias = "m.image_pack.rooms")]
         "im.ponies.emote_rooms" => super::image_pack,
+        #[ruma_enum(ident = RecentEmojis)]
+        "dev.jorgemartin.recent_emojis" => super::recent_emojis,
     }
 
     /// Any room account data event.

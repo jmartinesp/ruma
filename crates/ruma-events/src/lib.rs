@@ -192,6 +192,7 @@ pub mod typing;
 pub mod video;
 #[cfg(feature = "unstable-msc3245")]
 pub mod voice;
+pub mod recent_emojis;
 
 pub use self::{
     content::*,
