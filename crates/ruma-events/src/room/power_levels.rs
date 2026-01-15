@@ -31,11 +31,11 @@ use crate::{
 pub struct RoomPowerLevelsEventContent {
     /// The level required to ban a user.
     #[serde(
-        default = "default_power_level",
-        skip_serializing_if = "is_default_power_level",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub ban: Int,
+    pub ban: Option<Int>,
 
     /// The level required to send specific event types.
     ///
@@ -50,42 +50,42 @@ pub struct RoomPowerLevelsEventContent {
     /// The default level required to send message events.
     #[serde(
         default,
-        skip_serializing_if = "ruma_common::serde::is_default",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub events_default: Int,
+    pub events_default: Option<Int>,
 
     /// The level required to invite a user.
     #[serde(
         default,
-        skip_serializing_if = "ruma_common::serde::is_default",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub invite: Int,
+    pub invite: Option<Int>,
 
     /// The level required to kick a user.
     #[serde(
-        default = "default_power_level",
-        skip_serializing_if = "is_default_power_level",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub kick: Int,
+    pub kick: Option<Int>,
 
     /// The level required to redact an event.
     #[serde(
-        default = "default_power_level",
-        skip_serializing_if = "is_default_power_level",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub redact: Int,
+    pub redact: Option<Int>,
 
     /// The default level required to send state events.
     #[serde(
-        default = "default_power_level",
-        skip_serializing_if = "is_default_power_level",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub state_default: Int,
+    pub state_default: Option<Int>,
 
     /// The power levels for specific users.
     ///
@@ -100,10 +100,10 @@ pub struct RoomPowerLevelsEventContent {
     /// The default power level for every user in the room.
     #[serde(
         default,
-        skip_serializing_if = "ruma_common::serde::is_default",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub users_default: Int,
+    pub users_default: Option<Int>,
 
     /// The power level requirements for specific notification types.
     ///
@@ -119,15 +119,15 @@ impl RoomPowerLevelsEventContent {
         // events_default, users_default and invite having a default of 0 while the others have a
         // default of 50 is not an oversight, these defaults are from the Matrix specification.
         let mut pl = Self {
-            ban: default_power_level(),
+            ban: None,
             events: BTreeMap::new(),
-            events_default: int!(0),
-            invite: int!(0),
-            kick: default_power_level(),
-            redact: default_power_level(),
-            state_default: default_power_level(),
+            events_default: None,
+            invite: None,
+            kick: None,
+            redact: None,
+            state_default: None,
             users: BTreeMap::new(),
-            users_default: int!(0),
+            users_default: None,
             notifications: NotificationPowerLevels::default(),
         };
 
@@ -158,7 +158,7 @@ impl RedactContent for RoomPowerLevelsEventContent {
             ..
         } = self;
 
-        let invite = if rules.keep_room_power_levels_invite { invite } else { int!(0) };
+        let invite = if rules.keep_room_power_levels_invite { invite } else { None };
 
         RedactedRoomPowerLevelsEventContent {
             ban,
@@ -225,11 +225,11 @@ impl StrippedRoomPowerLevelsEvent {
 pub struct RedactedRoomPowerLevelsEventContent {
     /// The level required to ban a user.
     #[serde(
-        default = "default_power_level",
-        skip_serializing_if = "is_default_power_level",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub ban: Int,
+    pub ban: Option<Int>,
 
     /// The level required to send specific event types.
     ///
@@ -244,10 +244,10 @@ pub struct RedactedRoomPowerLevelsEventContent {
     /// The default level required to send message events.
     #[serde(
         default,
-        skip_serializing_if = "ruma_common::serde::is_default",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub events_default: Int,
+    pub events_default: Option<Int>,
 
     /// The level required to invite a user.
     ///
@@ -255,34 +255,34 @@ pub struct RedactedRoomPowerLevelsEventContent {
     /// preserved.
     #[serde(
         default,
-        skip_serializing_if = "ruma_common::serde::is_default",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub invite: Int,
+    pub invite: Option<Int>,
 
     /// The level required to kick a user.
     #[serde(
-        default = "default_power_level",
-        skip_serializing_if = "is_default_power_level",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub kick: Int,
+    pub kick: Option<Int>,
 
     /// The level required to redact an event.
     #[serde(
-        default = "default_power_level",
-        skip_serializing_if = "is_default_power_level",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub redact: Int,
+    pub redact: Option<Int>,
 
     /// The default level required to send state events.
     #[serde(
-        default = "default_power_level",
-        skip_serializing_if = "is_default_power_level",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub state_default: Int,
+    pub state_default: Option<Int>,
 
     /// The power levels for specific users.
     ///
@@ -297,10 +297,10 @@ pub struct RedactedRoomPowerLevelsEventContent {
     /// The default power level for every user in the room.
     #[serde(
         default,
-        skip_serializing_if = "ruma_common::serde::is_default",
-        deserialize_with = "ruma_common::serde::deserialize_v1_powerlevel"
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "ruma_common::serde::deserialize_optional_v1_powerlevel"
     )]
-    pub users_default: Int,
+    pub users_default: Option<Int>,
 }
 
 impl StaticEventContent for RedactedRoomPowerLevelsEventContent {
@@ -493,15 +493,15 @@ impl RoomPowerLevels {
                 users_default,
                 notifications,
             }) => Self {
-                ban,
+                ban: ban.unwrap_or_else(|| default_power_level()),
                 events,
-                events_default,
-                invite,
-                kick,
-                redact,
-                state_default,
+                events_default: events_default.unwrap_or_else(|| int!(0)),
+                invite: invite.unwrap_or_else(|| int!(0)),
+                kick: kick.unwrap_or_else(|| default_power_level()),
+                redact: redact.unwrap_or_else(|| default_power_level()),
+                state_default: state_default.unwrap_or_else(|| default_power_level()),
                 users,
-                users_default,
+                users_default: users_default.unwrap_or_else(|| int!(0)),
                 notifications,
                 rules: RoomPowerLevelsRules::new(rules, creators),
             },
@@ -516,15 +516,15 @@ impl RoomPowerLevels {
                 users,
                 users_default,
             }) => Self {
-                ban,
+                ban: ban.unwrap_or_else(|| default_power_level()),
                 events,
-                events_default,
-                invite,
-                kick,
-                redact,
-                state_default,
+                events_default: events_default.unwrap_or_else(|| int!(0)),
+                invite: invite.unwrap_or_else(|| int!(0)),
+                kick: kick.unwrap_or_else(|| default_power_level()),
+                redact: redact.unwrap_or_else(|| default_power_level()),
+                state_default: state_default.unwrap_or_else(|| default_power_level()),
                 users,
-                users_default,
+                users_default: users_default.unwrap_or_else(|| int!(0)),
                 notifications: NotificationPowerLevels::new(),
                 rules: RoomPowerLevelsRules::new(rules, creators),
             },
@@ -804,15 +804,15 @@ impl TryFrom<RoomPowerLevels> for RoomPowerLevelsEventContent {
         }
 
         Ok(Self {
-            ban: c.ban,
+            ban: Some(c.ban),
             events: c.events,
-            events_default: c.events_default,
-            invite: c.invite,
-            kick: c.kick,
-            redact: c.redact,
-            state_default: c.state_default,
+            events_default: Some(c.events_default),
+            invite: Some(c.invite),
+            kick: Some(c.kick),
+            redact: Some(c.redact),
+            state_default: Some(c.state_default),
             users: c.users,
-            users_default: c.users_default,
+            users_default: Some(c.users_default),
             notifications: c.notifications,
         })
     }
@@ -943,15 +943,15 @@ mod tests {
         let default = default_power_level();
 
         let power_levels = RoomPowerLevelsEventContent {
-            ban: default,
+            ban: None,
             events: BTreeMap::new(),
-            events_default: int!(0),
-            invite: int!(0),
-            kick: default,
-            redact: default,
-            state_default: default,
+            events_default: None,
+            invite: None,
+            kick: None,
+            redact: None,
+            state_default: None,
             users: BTreeMap::new(),
-            users_default: int!(0),
+            users_default: None,
             notifications: NotificationPowerLevels::default(),
         };
 
@@ -965,19 +965,19 @@ mod tests {
     fn serialization_with_all_fields() {
         let user = user_id!("@carl:example.com");
         let power_levels_event = RoomPowerLevelsEventContent {
-            ban: int!(23),
+            ban: Some(int!(23)),
             events: btreemap! {
                 "m.dummy".into() => int!(23)
             },
-            events_default: int!(23),
-            invite: int!(23),
-            kick: int!(23),
-            redact: int!(23),
-            state_default: int!(23),
+            events_default: Some(int!(23)),
+            invite: Some(int!(23)),
+            kick: Some(int!(23)),
+            redact: Some(int!(23)),
+            state_default: Some(int!(23)),
             users: btreemap! {
                 user.to_owned() => int!(23)
             },
-            users_default: int!(23),
+            users_default: Some(int!(23)),
             notifications: assign!(NotificationPowerLevels::new(), { room: int!(23) }),
         };
 

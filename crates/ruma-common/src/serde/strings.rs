@@ -194,6 +194,16 @@ where
     de.deserialize_any(IntOrStringVisitor)
 }
 
+pub fn deserialize_optional_v1_powerlevel<'de, D>(de: D) -> Result<Option<Int>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    match deserialize_v1_powerlevel(de) {
+        Ok(v) => Ok(Some(v)),
+        Err(error) => Err(error),
+    }
+}
+
 /// Take a BTreeMap with values of either an integer number or a string and deserialize
 /// those to integer numbers.
 ///

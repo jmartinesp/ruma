@@ -127,7 +127,7 @@ fn power_event_sync_deserialization() {
             },)
         ),))
     );
-    assert_eq!(ban, int!(50));
+    assert_eq!(ban, Some(int!(50)));
 }
 
 #[test]
